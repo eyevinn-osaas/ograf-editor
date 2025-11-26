@@ -16,27 +16,30 @@ COPY . .
 RUN mkdir -p /app/data
 
 # Create deployment-specific vite config
-RUN echo 'import { defineConfig } from '\''vite'\''\n\
-export default defineConfig({\n\
-  server: {\n\
-    port: 3000,\n\
-    open: true\n\
-  },\n\
-  preview: {\n\
-    allowedHosts: ['\''*.osaas.io'\'']\n\
-  },\n\
-  build: {\n\
-    outDir: '\''dist'\'',\n\
-    assetsDir: '\''assets'\'',\n\
-    sourcemap: true\n\
-  },\n\
-  optimizeDeps: {\n\
-    include: ['\''file-saver'\'', '\''monaco-editor'\'']\n\
-  },\n\
-  define: {\n\
-    '\''process.env.NODE_ENV'\'': JSON.stringify(process.env.NODE_ENV || '\''development'\'')\n\
-  }\n\
-})' > vite.config.osc.js
+RUN cat > vite.config.osc.js << 'EOF'
+import { defineConfig } from 'vite'
+
+export default defineConfig({
+  server: {
+    port: 3000,
+    open: true
+  },
+  preview: {
+    allowedHosts: ['*.osaas.io']
+  },
+  build: {
+    outDir: 'dist',
+    assetsDir: 'assets',
+    sourcemap: true
+  },
+  optimizeDeps: {
+    include: ['file-saver', 'monaco-editor']
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
+  }
+})
+EOF
 
 # Build the application
 RUN npm run build
