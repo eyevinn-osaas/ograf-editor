@@ -16,30 +16,29 @@ COPY . .
 RUN mkdir -p /app/data
 
 # Create deployment-specific vite config
-RUN cat > vite.config.osc.js << 'EOF'
-import { defineConfig } from 'vite'
-
-export default defineConfig({
-  server: {
-    port: 3000,
-    open: true
-  },
-  preview: {
-    allowedHosts: ['*.osaas.io']
-  },
-  build: {
-    outDir: 'dist',
-    assetsDir: 'assets',
-    sourcemap: true
-  },
-  optimizeDeps: {
-    include: ['file-saver', 'monaco-editor']
-  },
-  define: {
-    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
-  }
-})
-EOF
+RUN printf '%s\n' \
+    "import { defineConfig } from 'vite'" \
+    "" \
+    "export default defineConfig({" \
+    "  server: {" \
+    "    port: 3000," \
+    "    open: true" \
+    "  }," \
+    "  preview: {" \
+    "    allowedHosts: ['*.osaas.io']" \
+    "  }," \
+    "  build: {" \
+    "    outDir: 'dist'," \
+    "    assetsDir: 'assets'," \
+    "    sourcemap: true" \
+    "  }," \
+    "  optimizeDeps: {" \
+    "    include: ['file-saver', 'monaco-editor']" \
+    "  }," \
+    "  define: {" \
+    "    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')" \
+    "  }" \
+    "})" > vite.config.osc.js
 
 # Build the application
 RUN npm run build
@@ -48,4 +47,4 @@ RUN npm run build
 EXPOSE 8080
 
 # Start the application using vite preview with OSC config on port 8080
-CMD ["npx", "vite", "preview", "--config", "vite.config.osc.js", "--host", "0.0.0.0", "--port", "8080"]
+CMD ["npx", "vite", "preview", "--config", "vite.config.osc.js", "--host", "0.0.0.0", "--port", "8080", "--open", "false"]
