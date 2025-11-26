@@ -120,9 +120,9 @@ export class PreviewEngine {
     }
 
     renderEmptyState() {
-        const previewContainer = this.container.querySelector('.preview-frame');
-        if (previewContainer) {
-            previewContainer.innerHTML = `
+        if (this.previewFrame) {
+            // Use the existing previewFrame instead of overwriting the container
+            this.previewFrame.innerHTML = `
                 <div class="preview-placeholder">
                     <p>Select a template to preview</p>
                 </div>
