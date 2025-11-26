@@ -217,6 +217,8 @@ body {
 .code-editor-container {
     flex: 1;
     background-color: #1e1e1e;
+    display: flex;
+    flex-direction: column;
 }
 
 #monaco-editor {

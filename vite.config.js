@@ -11,6 +11,9 @@ export default defineConfig({
     sourcemap: true
   },
   optimizeDeps: {
-    include: ['file-saver']
+    include: ['file-saver', 'monaco-editor']
+  },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify(process.env.NODE_ENV || 'development')
   }
 })

@@ -17,8 +17,11 @@ export class CodeEditor {
     }
 
     setupTabs() {
-        const codeEditorDiv = this.container.querySelector('#code-editor');
-        if (!codeEditorDiv) return;
+        // this.container IS the #code-editor div
+        const codeEditorDiv = this.container;
+
+        // Clear existing content first
+        codeEditorDiv.innerHTML = '';
 
         // Create tabs if they don't exist
         let tabsContainer = codeEditorDiv.querySelector('.code-editor-tabs');
@@ -29,7 +32,7 @@ export class CodeEditor {
                 <button class="code-tab-btn active" data-tab="manifest">Manifest</button>
                 <button class="code-tab-btn" data-tab="component">Component</button>
             `;
-            codeEditorDiv.insertBefore(tabsContainer, codeEditorDiv.firstChild);
+            codeEditorDiv.appendChild(tabsContainer);
         }
 
         // Create content container
@@ -58,11 +61,71 @@ export class CodeEditor {
 
     async initializeMonaco() {
         try {
-            // For this implementation, we'll use a simple textarea fallback
-            // In a production environment, you would load Monaco Editor properly
-            this.setupSimpleEditor();
+            // Import Monaco Editor
+            const monaco = await import('monaco-editor');
+            this.monaco = monaco;
+            
+            // Set up Monaco Editor
+            this.setupMonacoEditors();
         } catch (error) {
+            console.warn('Failed to load Monaco Editor, falling back to simple editor:', error);
             this.setupSimpleEditor();
+        }
+    }
+
+    setupMonacoEditors() {
+        // Wait a bit to ensure DOM is fully created
+        setTimeout(() => {
+            const manifestContainer = document.querySelector('#manifest-editor');
+            const componentContainer = document.querySelector('#component-editor');
+            
+            if (!manifestContainer || !componentContainer) {
+                console.warn('Monaco editor containers not found, falling back to simple editor');
+                this.setupSimpleEditor();
+                return;
+            }
+            
+            this.createMonacoEditors(manifestContainer, componentContainer);
+        }, 100);
+    }
+
+    createMonacoEditors(manifestContainer, componentContainer) {
+        if (manifestContainer && this.monaco) {
+            // Clear container
+            manifestContainer.innerHTML = '';
+            
+            // Create Monaco Editor for manifest
+            this.manifestEditor = this.monaco.editor.create(manifestContainer, {
+                value: '{\n  "loading": "template..."\n}',
+                language: 'json',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                wordWrap: 'on'
+            });
+            
+            // Listen for changes
+            this.manifestEditor.onDidChangeModelContent(() => {
+                this.onManifestChange();
+            });
+        }
+
+        if (componentContainer && this.monaco) {
+            // Clear container  
+            componentContainer.innerHTML = '';
+            
+            // Create Monaco Editor for component
+            this.componentEditor = this.monaco.editor.create(componentContainer, {
+                value: '// Component code will appear here...',
+                language: 'javascript',
+                theme: 'vs-dark',
+                automaticLayout: true,
+                minimap: { enabled: false },
+                scrollBeyondLastLine: false,
+                wordWrap: 'on',
+                readOnly: true
+            });
         }
     }
 
@@ -126,7 +189,14 @@ export class CodeEditor {
     updateManifestEditor(template) {
         if (this.manifestEditor) {
             const manifestJson = JSON.stringify(template.manifest, null, 2);
-            this.manifestEditor.value = manifestJson;
+            
+            if (this.monaco && this.manifestEditor.setValue) {
+                // Monaco Editor
+                this.manifestEditor.setValue(manifestJson);
+            } else {
+                // Simple textarea
+                this.manifestEditor.value = manifestJson;
+            }
         }
     }
 
@@ -136,16 +206,37 @@ export class CodeEditor {
             if (!template.webComponent) {
                 template.generateWebComponent();
             }
-            this.componentEditor.value = template.webComponent || '// Component code will be generated here';
+            
+            const componentCode = template.webComponent || '// Component code will be generated here';
+            
+            if (this.monaco && this.componentEditor.setValue) {
+                // Monaco Editor
+                this.componentEditor.setValue(componentCode);
+            } else {
+                // Simple textarea
+                this.componentEditor.value = componentCode;
+            }
         }
     }
 
     clearEditors() {
+        const manifestMessage = '// Select a template to view its manifest';
+        const componentMessage = '// Select a template to view its component code';
+        
         if (this.manifestEditor) {
-            this.manifestEditor.value = '// Select a template to view its manifest';
+            if (this.monaco && this.manifestEditor.setValue) {
+                this.manifestEditor.setValue(manifestMessage);
+            } else {
+                this.manifestEditor.value = manifestMessage;
+            }
         }
+        
         if (this.componentEditor) {
-            this.componentEditor.value = '// Select a template to view its component code';
+            if (this.monaco && this.componentEditor.setValue) {
+                this.componentEditor.setValue(componentMessage);
+            } else {
+                this.componentEditor.value = componentMessage;
+            }
         }
     }
 
@@ -153,7 +244,10 @@ export class CodeEditor {
         if (!this.manifestEditor) return;
 
         try {
-            const manifestJson = this.manifestEditor.value;
+            // Get value from either Monaco or textarea
+            const manifestJson = this.monaco && this.manifestEditor.getValue 
+                ? this.manifestEditor.getValue() 
+                : this.manifestEditor.value;
             const manifest = JSON.parse(manifestJson);
             
             const template = this.templateManager.getCurrentTemplate();
