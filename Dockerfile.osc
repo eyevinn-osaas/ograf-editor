@@ -25,7 +25,7 @@ RUN printf '%s\n' \
     "    open: true" \
     "  }," \
     "  preview: {" \
-    "    allowedHosts: ['*.osaas.io']" \
+    "    allowedHosts: [process.env.OSC_HOSTNAME || 'localhost']" \
     "  }," \
     "  build: {" \
     "    outDir: 'dist'," \
