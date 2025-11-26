@@ -15,11 +15,34 @@ COPY . .
 # Create data directory for persistent storage
 RUN mkdir -p /app/data
 
+# Create deployment-specific vite config
+RUN echo 'import { defineConfig } from '\''vite'\''\n\
+export default defineConfig({\n\
+  server: {\n\
+    port: 3000,\n\
+    open: true\n\
+  },\n\
+  preview: {\n\
+    allowedHosts: ['\''*.osaas.io'\'']\n\
+  },\n\
+  build: {\n\
+    outDir: '\''dist'\'',\n\
+    assetsDir: '\''assets'\'',\n\
+    sourcemap: true\n\
+  },\n\
+  optimizeDeps: {\n\
+    include: ['\''file-saver'\'', '\''monaco-editor'\'']\n\
+  },\n\
+  define: {\n\
+    '\''process.env.NODE_ENV'\'': JSON.stringify(process.env.NODE_ENV || '\''development'\'')\n\
+  }\n\
+})' > vite.config.osc.js
+
 # Build the application
 RUN npm run build
 
 # Expose port 8080
 EXPOSE 8080
 
-# Start the application using vite preview on port 8080
-CMD ["npx", "vite", "preview", "--host", "0.0.0.0", "--port", "8080"]
+# Start the application using vite preview with OSC config on port 8080
+CMD ["npx", "vite", "preview", "--config", "vite.config.osc.js", "--host", "0.0.0.0", "--port", "8080"]
