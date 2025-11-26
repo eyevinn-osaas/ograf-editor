@@ -5,9 +5,6 @@ export default defineConfig({
     port: 3000,
     open: true
   },
-  preview: {
-    allowedHosts: ['*.osaas.io']
-  },
   build: {
     outDir: 'dist',
     assetsDir: 'assets',
