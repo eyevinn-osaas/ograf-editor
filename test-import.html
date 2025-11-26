@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Test Import Debug</title>
+</head>
+<body>
+    <div id="debug-output"></div>
+    
+    <script type="module">
+        import { TemplateManager } from './src/services/TemplateManager.js';
+        
+        // Test importing the simple template
+        const templateManager = new TemplateManager();
+        
+        // Read the test-simple.json file content
+        const manifestContent = `{
+          "$schema": "https://ograf.ebu.io/v1/specification/json-schemas/graphics/schema.json",
+          "name": "Simple Test Lower Third",
+          "description": "A simple test lower third for debugging",
+          "id": "simple-test",
+          "main": "graphic.mjs",
+          "version": "1.0.0",
+          "author": {
+            "name": "OGraf Editor",
+            "email": "test@example.com"
+          },
+          "supportsRealTime": true,
+          "supportsNonRealTime": true,
+          "schema": {
+            "type": "object",
+            "properties": {
+              "name": {
+                "type": "string",
+                "title": "Name",
+                "default": "John Doe"
+              },
+              "title": {
+                "type": "string",
+                "title": "Title",
+                "default": "Software Developer"
+              }
+            }
+          }
+        }`;
+        
+        try {
+            const template = templateManager.importTemplate(manifestContent, null);
+            console.log('Imported template:', template);
+            console.log('Template elements:', template.elements);
+            
+            // Test interpolation
+            template.elements.forEach(element => {
+                if (element.type === 'text') {
+                    console.log(`Element ${element.id} content: "${element.content}"`);
+                }
+            });
+            
+            const debugOutput = document.getElementById('debug-output');
+            debugOutput.innerHTML = `
+                <h2>Template Import Test</h2>
+                <p><strong>Template Name:</strong> ${template.manifest.name}</p>
+                <p><strong>Template ID:</strong> ${template.manifest.id}</p>
+                <p><strong>Elements Count:</strong> ${template.elements.length}</p>
+                <h3>Elements:</h3>
+                ${template.elements.map(el => `
+                    <div style="border: 1px solid #ccc; margin: 10px; padding: 10px;">
+                        <strong>ID:</strong> ${el.id}<br>
+                        <strong>Type:</strong> ${el.type}<br>
+                        <strong>Content:</strong> "${el.content}"<br>
+                        <strong>Position:</strong> (${el.x}, ${el.y})<br>
+                        <strong>Size:</strong> ${el.width}x${el.height}
+                    </div>
+                `).join('')}
+            `;
+            
+        } catch (error) {
+            console.error('Import failed:', error);
+            document.getElementById('debug-output').innerHTML = `
+                <h2>Import Error</h2>
+                <p style="color: red;">${error.message}</p>
+            `;
+        }
+    </script>
+</body>
+</html>

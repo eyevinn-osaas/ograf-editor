@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>OGraf Template Editor</title>
+    <link rel="stylesheet" href="src/styles/main.css">
+    <link rel="stylesheet" href="src/styles/components.css">
+</head>
+<body>
+    <div id="app">
+        <header class="header">
+            <div class="header-content">
+                <h1>OGraf Template Editor</h1>
+                <div class="header-actions">
+                    <button id="new-template" class="btn btn-primary">New Template</button>
+                    <button id="import-template" class="btn btn-secondary">Import</button>
+                    <button id="export-template" class="btn btn-secondary">Export</button>
+                </div>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <aside class="sidebar">
+                <div class="panel template-list">
+                    <h3>Templates</h3>
+                    <div id="template-list" class="template-list-content">
+                        <div class="empty-state">
+                            <p>No templates created yet</p>
+                            <button id="create-first-template" class="btn btn-primary">Create Your First Template</button>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="panel properties-panel">
+                    <h3>Properties</h3>
+                    <div id="properties-content" class="properties-content">
+                        <div class="empty-state">
+                            <p>Select an element to edit properties</p>
+                        </div>
+                    </div>
+                </div>
+            </aside>
+
+            <section class="editor-area">
+                <div class="editor-tabs">
+                    <button class="tab-btn active" data-tab="visual">Visual Editor</button>
+                    <button class="tab-btn" data-tab="code">Code Editor</button>
+                    <button class="tab-btn" data-tab="preview">Preview</button>
+                </div>
+
+                <div class="editor-content">
+                    <div id="visual-editor" class="editor-tab active">
+                        <div class="canvas-container">
+                            <div id="graphics-canvas" class="graphics-canvas">
+                                <div class="canvas-placeholder">
+                                    <p>Select a template or create a new one to start editing</p>
+                                </div>
+                            </div>
+                        </div>
+                        
+                        <div class="element-toolbar">
+                            <button class="tool-btn" data-element="text" title="Add Text">
+                                <span>T</span>
+                            </button>
+                            <button class="tool-btn" data-element="image" title="Add Image">
+                                <span>📷</span>
+                            </button>
+                            <button class="tool-btn" data-element="rect" title="Add Rectangle">
+                                <span>▭</span>
+                            </button>
+                            <button class="tool-btn" data-element="circle" title="Add Circle">
+                                <span>○</span>
+                            </button>
+                        </div>
+                    </div>
+
+                    <div id="code-editor" class="editor-tab">
+                        <div class="code-editor-container">
+                            <div id="monaco-editor"></div>
+                        </div>
+                    </div>
+
+                    <div id="preview-editor" class="editor-tab">
+                        <div class="preview-container">
+                            <div class="preview-controls">
+                                <button id="play-preview" class="btn btn-primary">Play</button>
+                                <button id="stop-preview" class="btn btn-secondary">Stop</button>
+                                <button id="update-preview" class="btn btn-secondary">Update</button>
+                            </div>
+                            <div id="preview-frame" class="preview-frame">
+                                <div class="preview-placeholder">
+                                    <p>Preview will appear here</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </section>
+        </main>
+    </div>
+
+    <div id="template-modal" class="modal hidden">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Create New Template</h2>
+                <button class="modal-close">&times;</button>
+            </div>
+            <div class="modal-body">
+                <form id="template-form">
+                    <div class="form-group">
+                        <label for="template-id">Template ID:</label>
+                        <input type="text" id="template-id" name="id" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="template-name">Name:</label>
+                        <input type="text" id="template-name" name="name" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="template-description">Description:</label>
+                        <textarea id="template-description" name="description"></textarea>
+                    </div>
+                    <div class="form-group">
+                        <label for="template-type">Template Type:</label>
+                        <select id="template-type" name="type">
+                            <option value="lower-third">Lower Third</option>
+                            <option value="title">Title Card</option>
+                            <option value="bug">Station Bug</option>
+                            <option value="custom">Custom</option>
+                        </select>
+                    </div>
+                </form>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" id="cancel-template">Cancel</button>
+                <button type="button" class="btn btn-primary" id="create-template">Create</button>
+            </div>
+        </div>
+    </div>
+
+    <script type="module" src="src/main.js"></script>
+</body>
+</html>
