@@ -144,7 +144,7 @@ export class PropertyPanel {
                 </div>
 
                 <div class="property-group">
-                    <label>Animation Direction</label>
+                    <label>Slide In Direction</label>
                     <select class="property-input" data-animation-property="slideInDirection">
                         <option value="left" ${animationSettings.slideInDirection === 'left' ? 'selected' : ''}>From Left</option>
                         <option value="right" ${animationSettings.slideInDirection === 'right' ? 'selected' : ''}>From Right</option>
@@ -152,11 +152,16 @@ export class PropertyPanel {
                         <option value="bottom" ${animationSettings.slideInDirection === 'bottom' ? 'selected' : ''}>From Bottom</option>
                     </select>
                 </div>
-
                 <div class="property-group">
-                    <button class="btn btn-secondary" id="preview-slide-in">Preview Slide In</button>
-                    <button class="btn btn-secondary" id="preview-slide-out">Preview Slide Out</button>
+                    <label>Slide Out Direction</label>
+                    <select class="property-input" data-animation-property="slideOutDirection">
+                        <option value="left" ${animationSettings.slideOutDirection === 'left' ? 'selected' : ''}>To Left</option>
+                        <option value="right" ${animationSettings.slideOutDirection === 'right' ? 'selected' : ''}>To Right</option>
+                        <option value="top" ${animationSettings.slideOutDirection === 'top' ? 'selected' : ''}>To Top</option>
+                        <option value="bottom" ${animationSettings.slideOutDirection === 'bottom' ? 'selected' : ''}>To Bottom</option>
+                    </select>
                 </div>
+
             </div>
         `;
 
